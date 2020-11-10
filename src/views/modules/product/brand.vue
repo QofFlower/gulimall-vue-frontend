@@ -63,6 +63,15 @@
         align="center"
         label="品牌logo地址"
       >
+        <template slot-scope="scope">
+          <el-image
+            style="width: 100px; height: 80px"
+            :src="scope.row.logo"
+            fit="contain"
+          >
+          </el-image>
+          <!-- <img :src="scope.row.logo" alt=""> -->
+        </template>
       </el-table-column>
       <el-table-column
         prop="descript"
@@ -257,7 +266,7 @@ export default {
         method: "put",
         data: this.$http.adornData({
           brandId: brand.brandId,
-          showStatus: brand.showStatus ? 1 : 0,
+          showStatus: brand.showStatus,
         }),
       }).then(({ data }) => {
         if (data.code === 0) {
