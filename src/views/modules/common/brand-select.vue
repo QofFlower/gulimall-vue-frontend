@@ -14,7 +14,7 @@
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
 //例如：import 《组件名称》 from '《组件路径》';
-
+import PubSub from "pubsub-js";
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: {},
@@ -26,11 +26,11 @@ export default {
       brands: [
         {
           label: "a",
-          value: 1
-        }
+          value: 1,
+        },
       ],
       brandId: "",
-      subscribe: null
+      subscribe: null,
     };
   },
   //计算属性 类似于data概念
@@ -38,8 +38,8 @@ export default {
   //监控data中的数据变化
   watch: {
     brandId(val) {
-      this.PubSub.publish("brandId", val);
-    }
+      PubSub.publish("brandId", val);
+    },
   },
   //方法集合
   methods: {
@@ -48,20 +48,23 @@ export default {
         url: this.$http.adornUrl("/product/categorybrandrelation/brands/list"),
         method: "get",
         params: this.$http.adornParams({
-          catId: this.catId
-        })
+          catId: this.catId,
+        }),
       }).then(({ data }) => {
         this.brands = data.data;
       });
-    }
+    },
   },
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    // this.getCatBrands();
+  },
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     //监听三级分类消息的变化
     this.subscribe = PubSub.subscribe("catPath", (msg, val) => {
       this.catId = val[val.length - 1];
+      console.log("catId = ", this.catId);
       this.getCatBrands();
     });
   },
@@ -73,7 +76,7 @@ export default {
     PubSub.unsubscribe(this.subscribe); //销毁订阅
   }, //生命周期 - 销毁之前
   destroyed() {}, //生命周期 - 销毁完成
-  activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
+  activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
 <style scoped>
